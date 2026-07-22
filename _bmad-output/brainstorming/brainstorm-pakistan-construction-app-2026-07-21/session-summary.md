@@ -2,9 +2,9 @@
 
 **Status:** In progress (paused mid-session — resumable)
 **Mode:** Creative Partner
-**Started:** 2026-07-21
+**Sessions:** 2026-07-21, 2026-07-22
 **Participants:** Mercurial_taha (user) + Claude (brainstorming coach)
-**Raw log:** [.memlog.md](.memlog.md) — 54 entries, time-ordered, authorship-attributed
+**Raw log:** [.memlog.md](.memlog.md) — 68 entries, time-ordered, authorship-attributed
 
 ---
 
@@ -120,13 +120,57 @@ Three sources, stacked by increasing value:
 
 ---
 
+---
+
+## Session 2 (2026-07-22) — Client Delivery and Approvals
+
+### How the client receives the project (settled)
+
+The original three-tier proposal (dedicated app / WhatsApp report / programmatic WhatsApp) was critiqued on three counts: tiers 2 and 3 mixed a *client segment* with a *company capability*; "educated clients" is a weak predictor of who wants an app; and programmatic WhatsApp has a hard ceiling — the official WhatsApp Business Platform requires pre-approved templates, imposes a **24-hour window** outside which only templates can be sent, meters messages, and needs a Business Solution Provider, while unofficial libraries get numbers banned. *(Meta changes these rules often — verify current terms before designing on them.)*
+
+**Decisions taken:**
+
+| Decision | Detail |
+|---|---|
+| **Client app — build it** | The primary client surface |
+| **MVP form factor** | Responsive **web app** |
+| **Backend** | API-first, so native mobile apps can later be built against it easily |
+| **WhatsApp delivery** | A **PDF report** — *not* a link into the app |
+| **Company-side WhatsApp integration** | Provisioned for in architecture and design, **not implemented in MVP** |
+
+### The overseas segment (raised, not yet decided)
+
+The sharpest predictor of who wants an app isn't education, it's **distance**. Overseas Pakistanis building a house back home are the extreme case of the product's premise: they genuinely cannot visit, they are among the most cheated, they are app-comfortable, and they hold the money worth defending. Note what distance does to the "decisions by phone call" assumption — across a five-to-nine-hour time difference, **asynchronous approval stops being a convenience and becomes the point**. Candidate beachhead segment, with domestic clients as the expansion.
+
+### Consequences of the PDF choice
+
+- **It is an artifact the client keeps** — works without signal, survives, and feels official in the way a *report* feels official. Archive every weekly PDF server-side as a numbered series, so the client's copy matches the archive and **a missing week is visible**, which disciplines the company's own staff.
+- **It gets forwarded** — to the overseas client's father and brother watching the site, into family WhatsApp groups, and eventually in front of someone about to hire a builder. Cheapest marketing channel available, so it must be branded and self-explanatory to a stranger — and must never leak supplier rates or margins, since the same forwarding reaches competitors.
+
+### Approvals and change orders
+
+**Decided:** the approval mechanism lives **outside the app** — WhatsApp voice notes, texts, and calls — on a cultural reading of this vertical. The app **records the approval after the fact** for later reference, surfaced in the weekly report or in-app. Project documents (receipts, architectural drawings, etc.) are maintained in the app.
+
+**The flaw identified in that design:** a record written after the fact is written by the party who benefits from it. "Client approved imported tile at Rs 450/sq ft," logged by the site engineer, is the *company's version* of events — no stronger than the company's word in a dispute, yet it looks like evidence. This is precisely the point where the trust machine matters most.
+
+**Four proposed fixes, none of which ask the client to change behaviour:**
+
+1. **Negative confirmation** — the decision still happens on WhatsApp, but the weekly report carries a *"Decisions recorded this week"* section; silence over a stated window counts as accepted, one reply disputes it. Pakistanis know this pattern from bank statements and utility bills: no forms, no signing ceremony, but a genuinely bilateral record.
+2. **Attach the client's own evidence** — forward the client's actual voice note or screenshot into the decision entry, so the record is the client's own voice rather than the company's paraphrase.
+3. **Force the two numbers** — every change record must carry **cost impact and schedule impact** at the moment of logging. The end-of-project fight is never "I didn't choose marble," it is "I didn't know it would cost this much and delay us three weeks."
+4. **Split the documents** — receipts hang off ledger entries, not a folder. Drawings need **version control and an "issued for construction" marker**, since building from a superseded revision is among the most expensive and most common disputes in the industry.
+
+Also proposed: when no decisions were logged in a week, the report should say **"decisions recorded this week: none"** — making unrecorded verbal decisions visible by their absence.
+
+---
+
 ## Where We Paused
 
-Technique 1 (**Job to Be Done**) complete. Technique 2 (**SCAMPER**) just started, on the **S — Substitute** lens.
+Mid-**SCAMPER**, in the middle of the approvals thread.
 
-**Open on the table, unanswered:** a proposal to *substitute the app itself* for the client — the client installs nothing, and every Friday receives a WhatsApp message with the week's photos, percentage moved, rupees spent, material delivered, and next milestone date. The full application exists for the company (who will adopt it, because it is their control system), while the client's experience is a push into a channel they already open fifty times a day. Zero client onboarding friction, and the weekly ritual may do more for trust than a dashboard opened twice and forgotten.
+**The open question:** if the site engineer can freely log "client approved X," the system becomes a **fraud instrument** — a fake change order is perfect cover for pilferage or an inflated cost, landing as a legitimate-looking extra bill on the client while management sees a normal record. So: **who should be allowed to record a decision, and what should the system demand before a change order becomes real** — senior sign-off above a rupee threshold, mandatory client evidence attached, something else?
 
-**The question left hanging:** what else in this picture could be swapped out — the site engineer as data-entry clerk, the percentage-completion number, the BOQ as the baseline, money as the unit of measure?
+**Still unanswered from session 1:** what else in the concept could be substituted — the site engineer as data-entry clerk, the percentage-completion number (progress denominated in physically countable units instead: bricks laid, cubic metres poured, square feet plastered — making "40% done" arithmetic rather than opinion), the BOQ as baseline, money as the unit of measure.
 
 ### Remaining plan
 
