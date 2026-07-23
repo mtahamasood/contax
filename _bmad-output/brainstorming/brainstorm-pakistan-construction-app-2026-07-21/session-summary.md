@@ -164,9 +164,64 @@ Also proposed: when no decisions were logged in a week, the report should say **
 
 ---
 
+## Session 3 (2026-07-23) — Change-Order Governance, MVP Scope, AI/ML Vision
+
+### Operating principle established (north star)
+
+The user set a meta-directive that now governs the whole session:
+
+1. **Prefer configurable choice with a recommended, pre-filled default** over a hard-coded single answer. The product is opinionated but not rigid — every governance threshold/rule ships as a default the company can reconfigure.
+2. **Keep internal-facing and client-facing concerns as separate axes**, never conflated.
+3. **For any question the coach would normally hand back, the coach decides using this north star, then notifies the user for review** — the user corrects if needed rather than being asked up front.
+
+### Change-order governance (finalized, then corrected)
+
+Finalized design to stop an unguarded "client approved X" from becoming a fraud instrument:
+
+- **Separation of powers** — anyone may *raise* a change; whoever raised it can never *ratify* or *bill* it.
+- **Lifecycle** — Draft → Proposed (cost + schedule delta mandatory) → Client-Aware → Approved → Executed → Billed; every transition stamped who/when/evidence, append-only.
+- **Three authority tiers** scaling with rupee amount (company-configurable, defaults): Tier A (≤1% or Rs 50k) — site engineer proposes; Tier B (≤5% or Rs 500k) — manager sign-off; Tier C (above) — owner/admin sign-off.
+- **Client ratification** — recommended default is negative confirmation for Tier A, positive client evidence (voice note / screenshot / in-app tap) for Tier B and C. **[Corrected]** these are *recommended defaults only* — all three ratification modes are always offered per tier; the company can override any cell.
+- **Segregation of duties** — the person who logs a purchase/consumption against a CO cannot be the one who proposed it (defeating it needs cross-rank collusion).
+- **No retroactive billing** — a CO must reach Approved before its costs are billable; work done early is logged but flagged "executed before approval" and not billable until ratified. **[Corrected]** this "executed before approval" gate is an *internal* senior-management approval concern, decoupled from client ratification — internal approval and client ratification are two independent configurable axes.
+- **Fraud surveillance on COs** — rate-vs-benchmark, CO velocity per engineer flagged cross-project, round-number bias, "just-under-threshold" clustering.
+- **Immutable trail** — append-only, edits create versions, no delete (only Cancelled state).
+
+### MVP scope — SCAMPER "Eliminate" pass (decided)
+
+Cut to find the spine. **MVP spine:**
+
+1. Milestones with **computed** % completion (derived from BOQ physical quantities, *not* a typed number — removes an invented number and a fraud surface; also settles the session-1 "substitute the unit of progress" thread)
+2. Accounts + client outstanding balance
+3. Material vs BOQ, with **OCR'd challans** (manual typing demoted to fallback)
+4. Photo evidence timeline
+5. Weekly PDF report
+6. Admin cross-project rollup
+7. Rule-engine fraud flags
+8. Change-order recording with tiered governance
+9. **Versioned drawings** — *"issued for construction" marker* **[user override: kept in v1, not deferred]**
+
+**Identity:** both **email and phone number** supported in v1. Recommended default is passwordless (phone + OTP link, PDF over WhatsApp), but email is a first-class alternative.
+
+**Deferred to v2 (logged for traceability):** quality checklists, inspections, snag lists, material test reports; the ML anomaly engine (pending — see below); deep document vault; two-way WhatsApp integration.
+
+### AI/ML vision (new direction)
+
+The product is to be **AI/ML-rich**, with three intended model execution locations: (1) client-side (browser/mobile on-device), (2) own server-side self-hosting open-source LLMs incl. SLMs, (3) third-party LLM providers.
+
+**Open research tasks handed to the coach** (deliverable in progress at [ai-ml-research.md](ai-ml-research.md)):
+- Can the ML anomaly engine be in v1, and how (cold-start techniques)?
+- Which features are the best AI/ML fits?
+- Which specific open-source models (Hugging Face etc.) suit each task?
+- Which of the 3 execution locations suits which model types, and why?
+
+---
+
 ## Where We Paused
 
-Mid-**SCAMPER**, in the middle of the approvals thread.
+**Session 3 paused 2026-07-23** — user stepping away ~2 hours to read the backlog, then continue. A background research agent is preparing the AI/ML deliverable ([ai-ml-research.md](ai-ml-research.md)) in the meantime.
+
+Earlier pause point (now largely resolved): mid-**SCAMPER**, in the middle of the approvals thread.
 
 **The open question:** if the site engineer can freely log "client approved X," the system becomes a **fraud instrument** — a fake change order is perfect cover for pilferage or an inflated cost, landing as a legitimate-looking extra bill on the client while management sees a normal record. So: **who should be allowed to record a decision, and what should the system demand before a change order becomes real** — senior sign-off above a rupee threshold, mandatory client evidence attached, something else?
 
