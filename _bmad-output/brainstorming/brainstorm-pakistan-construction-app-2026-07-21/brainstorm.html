@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contax — Brainstorm Blueprint</title>
+<style>
+  /* ============ THEME TOKENS ============ */
+  :root{
+    /* default: BLUEPRINT (dark) */
+    --paper:#0b2545;
+    --paper2:#0e2c53;
+    --ink:#e8f1ff;
+    --ink-dim:#9db9dd;
+    --line:rgba(150,190,240,.28);
+    --line-strong:rgba(180,214,255,.55);
+    --cyan:#63d2ff;
+    --gold:#f4c15d;
+    --gold-soft:rgba(244,193,93,.14);
+    --cyan-soft:rgba(99,210,255,.12);
+    --red:#ff8a7a;
+    --green:#7ce0b0;
+    --grid:rgba(140,180,235,.10);
+    --grid-strong:rgba(140,180,235,.18);
+    --card:rgba(255,255,255,.035);
+    --shadow:0 18px 50px rgba(0,0,0,.45);
+    --mono:'SF Mono',ui-monospace,'Cascadia Code','Roboto Mono',Menlo,Consolas,monospace;
+    --sans:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      /* WHITEPRINT (light drafting paper) */
+      --paper:#f4f1e8;
+      --paper2:#efeadd;
+      --ink:#1c2f3f;
+      --ink-dim:#5b6b7a;
+      --line:rgba(40,70,100,.22);
+      --line-strong:rgba(30,55,80,.5);
+      --cyan:#0f6f9e;
+      --gold:#a9741a;
+      --gold-soft:rgba(169,116,26,.12);
+      --cyan-soft:rgba(15,111,158,.10);
+      --red:#b8412e;
+      --green:#1d7a53;
+      --grid:rgba(40,70,100,.09);
+      --grid-strong:rgba(40,70,100,.16);
+      --card:rgba(255,255,255,.5);
+      --shadow:0 14px 36px rgba(60,60,40,.14);
+    }
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;color:var(--ink);background:var(--paper);
+    font-family:var(--sans);line-height:1.6;
+    background-image:
+      linear-gradient(var(--grid) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px),
+      linear-gradient(var(--grid-strong) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px);
+    background-size:28px 28px,28px 28px,140px 140px,140px 140px;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+  section{padding:64px 0;position:relative}
+  h1,h2,h3{font-weight:650;line-height:1.15;letter-spacing:.2px}
+  a{color:var(--cyan)}
+
+  /* ============ DRAFTING LABELS ============ */
+  .tick{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cyan)}
+  .stage{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase}
+  .rule{height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent);border:0;margin:0}
+
+  /* ============ HERO ============ */
+  .hero{padding:96px 0 72px;overflow:hidden}
+  .titlebar{
+    border:1px solid var(--line-strong);border-radius:6px;background:var(--card);
+    backdrop-filter:blur(2px);box-shadow:var(--shadow);position:relative;
+  }
+  .titlebar::before{content:"";position:absolute;inset:8px;border:1px solid var(--line);border-radius:3px;pointer-events:none}
+  .tb-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding:14px 20px;border-bottom:1px solid var(--line);font-family:var(--mono);
+    font-size:11.5px;letter-spacing:.14em;color:var(--ink-dim);text-transform:uppercase}
+  .tb-body{padding:40px 34px 36px}
+  .brand{font-size:clamp(48px,11vw,120px);font-weight:750;letter-spacing:-.02em;margin:0;line-height:.92;
+    background:linear-gradient(180deg,var(--ink),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand small{display:block;font-size:clamp(13px,2.4vw,18px);font-weight:500;letter-spacing:.32em;
+    text-transform:uppercase;color:var(--cyan);margin-top:18px;-webkit-text-fill-color:var(--cyan)}
+  .tagline{max-width:60ch;color:var(--ink-dim);font-size:16.5px;margin:22px 0 0}
+  .tb-foot{display:flex;flex-wrap:wrap;gap:26px;padding:16px 34px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:12px;color:var(--ink-dim)}
+  .tb-foot b{color:var(--ink);font-weight:600}
+
+  /* ============ AUTHOR LEGEND ============ */
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
+  .chip{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;
+    padding:7px 13px;border:1px solid var(--line);border-radius:40px;background:var(--card)}
+  .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .dot.user{background:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+  .dot.coach{background:var(--cyan);box-shadow:0 0 0 3px var(--cyan-soft)}
+
+  /* ============ SECTION HEADINGS ============ */
+  .shead{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+  .snum{font-family:var(--mono);font-size:13px;color:var(--cyan);border:1px solid var(--line-strong);
+    border-radius:4px;padding:3px 9px;letter-spacing:.1em}
+  h2{font-size:clamp(26px,4.6vw,40px);margin:6px 0 4px}
+  .sub{color:var(--ink-dim);max-width:66ch;margin:0 0 30px;font-size:16px}
+
+  /* ============ AUTHOR-TAGGED CARDS ============ */
+  .card{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:18px 20px;position:relative}
+  .card.user{border-left:3px solid var(--gold)}
+  .card.coach{border-left:3px solid var(--cyan)}
+  .card .who{position:absolute;top:12px;right:14px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim)}
+  .card.user .who{color:var(--gold)}
+  .card.coach .who{color:var(--cyan)}
+  .card h4{margin:0 0 6px;font-size:16px;padding-right:64px}
+  .card p{margin:0;color:var(--ink-dim);font-size:14.5px}
+
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+
+  /* ============ SEED PILLARS ============ */
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;align-items:end}
+  .pil{border:1px solid var(--line-strong);border-radius:6px 6px 0 0;background:var(--gold-soft);
+    padding:18px;position:relative;border-bottom:3px solid var(--gold)}
+  .pil .pn{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:.14em}
+  .pil h4{margin:8px 0 4px;font-size:16px}
+  .pil p{margin:0;font-size:13.5px;color:var(--ink-dim)}
+  .ground{height:8px;background:repeating-linear-gradient(90deg,var(--line-strong) 0 10px,transparent 10px 20px);margin-top:2px}
+
+  /* ============ FOUNDATION (JTBD) ============ */
+  .found{border:1px solid var(--line-strong);border-radius:8px;background:var(--card);padding:0;overflow:hidden;box-shadow:var(--shadow)}
+  .found .top{padding:26px 28px;background:var(--cyan-soft);border-bottom:1px dashed var(--line-strong)}
+  .found .top .q{font-size:20px;font-weight:600;margin:6px 0 0;max-width:60ch}
+  .found .btm{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .found .btm div{padding:20px 24px;border-right:1px solid var(--line)}
+  .found .btm div:last-child{border-right:0}
+  .found .btm b{color:var(--red);font-family:var(--mono);font-size:12px;letter-spacing:.08em;display:block;margin-bottom:4px}
+  .pull{font-size:clamp(20px,3.4vw,30px);font-weight:650;line-height:1.3;margin:26px 0 0;max-width:24ch}
+  .pull .hl{color:var(--cyan)}
+
+  /* ============ SCAMPER GRID ============ */
+  .scamper{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .lens{border:1px solid var(--line);border-radius:8px;background:var(--card);overflow:hidden}
+  .lens .lh{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .lens .glyph{width:34px;height:34px;flex:none;border:1px solid var(--line-strong);border-radius:6px;
+    display:grid;place-items:center;font-family:var(--mono);font-weight:700;color:var(--cyan);font-size:15px;background:var(--cyan-soft)}
+  .lens .lt{font-weight:650;font-size:15px}
+  .lens .lt span{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-dim);font-weight:400}
+  .lens.dim{opacity:.62}
+  .lens ul{margin:0;padding:14px 16px 16px 16px;list-style:none;display:grid;gap:10px}
+  .lens li{position:relative;padding-left:20px;font-size:14px;color:var(--ink-dim)}
+  .lens li::before{content:"";position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:50%}
+  .lens li.u::before{background:var(--gold)}
+  .lens li.c::before{background:var(--cyan)}
+  .lens li b{color:var(--ink);font-weight:600}
+
+  /* ============ GOVERNANCE LIFECYCLE ============ */
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 30px;font-family:var(--mono);font-size:13px}
+  .flow .st{border:1px solid var(--line-strong);border-radius:5px;padding:7px 12px;background:var(--card);white-space:nowrap}
+  .flow .st.key{color:var(--cyan);border-color:var(--cyan)}
+  .flow .ar{color:var(--ink-dim)}
+  .tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:24px}
+  .tier{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .tier .th{padding:12px 16px;font-weight:650;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .tier .th small{font-family:var(--mono);font-size:11px;color:var(--ink-dim);font-weight:400}
+  .tier.A .th{background:linear-gradient(90deg,var(--green),transparent);}
+  .tier.B .th{background:linear-gradient(90deg,var(--gold),transparent);}
+  .tier.C .th{background:linear-gradient(90deg,var(--red),transparent);}
+  .tier p{margin:0;padding:14px 16px;font-size:14px;color:var(--ink-dim)}
+  .govlist{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  .govlist li{border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:6px;
+    padding:12px 15px;background:var(--card);font-size:14.5px}
+  .govlist li b{color:var(--ink)}
+  .northstar{border:1px dashed var(--gold);border-radius:8px;background:var(--gold-soft);padding:18px 20px;margin-top:24px}
+  .northstar .tick{color:var(--gold)}
+  .northstar p{margin:8px 0 0;font-size:15px}
+
+  /* ============ REVERSALS (flips) ============ */
+  .flips{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .flip{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:16px 18px}
+  .flip .from{color:var(--ink-dim);font-size:13.5px;text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:1px}
+  .flip .arrow{color:var(--cyan);font-family:var(--mono);margin:8px 0;font-size:13px}
+  .flip .to{font-weight:600;font-size:15.5px}
+  .flip .verdict{margin-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+    text-transform:uppercase;display:inline-block;padding:4px 10px;border-radius:40px;border:1px solid var(--line)}
+  .flip .verdict.keep{color:var(--green);border-color:var(--green)}
+  .flip .verdict.reject{color:var(--red);border-color:var(--red)}
+  .flip .verdict.mod{color:var(--gold);border-color:var(--gold)}
+
+  /* ============ KEYSTONE ============ */
+  .keystone{position:relative;text-align:center;padding:36px 24px;max-width:760px;margin:0 auto;
+    border:1px solid var(--cyan);border-radius:8px;background:
+      radial-gradient(120% 140% at 50% 0%,var(--cyan-soft),transparent 60%),var(--card);box-shadow:var(--shadow)}
+  .keystone .kmark{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase}
+  .keystone h3{font-size:clamp(22px,4vw,32px);margin:12px 0 12px}
+  .keystone p{color:var(--ink-dim);max-width:56ch;margin:0 auto;font-size:15.5px}
+  .backsolve{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:26px}
+  .bs{border:1px solid var(--line);border-radius:6px;padding:14px;font-size:13.5px;background:var(--paper2)}
+  .bs b{display:block;color:var(--cyan);font-family:var(--mono);font-size:11px;letter-spacing:.1em;margin-bottom:5px;text-transform:uppercase}
+
+  /* ============ MOSCOW BUILDING ============ */
+  .building{display:grid;gap:10px;max-width:900px;margin:0 auto}
+  .floor{border:1px solid var(--line-strong);border-radius:6px;overflow:hidden;box-shadow:var(--shadow)}
+  .floor .fh{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 18px;
+    font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;font-size:13px}
+  .floor .fh .cnt{font-size:11px;opacity:.8}
+  .floor.must .fh{background:linear-gradient(90deg,var(--cyan),transparent);color:var(--paper)}
+  .floor.should .fh{background:var(--card);color:var(--ink-dim)}
+  .floor.could .fh{background:var(--gold-soft);color:var(--gold)}
+  .floor.wont .fh{background:var(--card);color:var(--red)}
+  .floor .fb{padding:14px 16px;display:flex;flex-wrap:wrap;gap:8px;background:var(--paper2)}
+  .feat{font-size:12.5px;padding:6px 11px;border:1px solid var(--line);border-radius:40px;background:var(--card)}
+  .floor.must .feat{border-color:var(--cyan-soft)}
+  .empty{font-style:italic;color:var(--ink-dim);font-size:13.5px;padding:4px 0}
+  .promo{color:var(--gold);font-family:var(--mono);font-size:11px;border:1px dashed var(--gold);border-radius:40px;padding:6px 11px}
+
+  /* ============ DATA CREDIBILITY ============ */
+  .cred{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-bottom:20px}
+  @media(max-width:640px){.cred{grid-template-columns:1fr}}
+  .source{border:1px solid var(--line-strong);border-radius:8px;padding:18px;background:var(--card)}
+  .source b{color:var(--cyan);font-family:var(--mono);font-size:12px;letter-spacing:.1em}
+  .source h4{margin:8px 0 4px;font-size:16px}
+  .source p{margin:0;color:var(--ink-dim);font-size:13.5px}
+  .recon{text-align:center;font-family:var(--mono);color:var(--gold);font-size:13px}
+  .recon .big{font-size:26px;display:block}
+
+  /* ============ MONETIZATION (parked) ============ */
+  .parked{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+  .park{border:1px dashed var(--line-strong);border-radius:8px;padding:15px 16px;background:var(--card);position:relative}
+  .park .pk{position:absolute;top:-9px;left:14px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    background:var(--paper);padding:1px 8px;color:var(--gold);text-transform:uppercase;border:1px solid var(--line)}
+  .park h4{margin:8px 0 5px;font-size:15px}
+  .park p{margin:0;color:var(--ink-dim);font-size:13.5px}
+
+  /* ============ SYNTHESIS ============ */
+  .synth{border:1px solid var(--line-strong);border-radius:10px;background:
+    radial-gradient(120% 100% at 100% 0%,var(--cyan-soft),transparent 55%),var(--card);
+    padding:34px 30px;box-shadow:var(--shadow)}
+  .synth p{font-size:16px;margin:0 0 16px}
+  .synth p:last-child{margin-bottom:0}
+  .synth .hl{color:var(--cyan);font-weight:600}
+  .synth .arc{font-family:var(--mono);font-size:13px;color:var(--gold);letter-spacing:.06em;display:block;margin:20px 0 6px}
+
+  footer{padding:50px 0 70px;text-align:center;color:var(--ink-dim);font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+  footer .rule{margin-bottom:26px}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="titlebar reveal">
+      <div class="tb-head">
+        <span>Drawing No. CTX-001 &nbsp;/&nbsp; Brainstorm Blueprint</span>
+        <span>Scale: Foundation → Structure</span>
+      </div>
+      <div class="tb-body">
+        <h1 class="brand">CONTAX<small>The trust machine for Pakistani construction</small></h1>
+        <p class="tagline">A three-session ideation traveled from a client-transparency dashboard to a two-sided
+        anti-fraud instrument sold to construction companies — trust engineered through <em>structure</em>, not behaviour change.</p>
+        <div class="legend">
+          <span class="chip"><span class="dot user"></span> Idea by the client <em>(you)</em></span>
+          <span class="chip"><span class="dot coach"></span> Idea by the coach</span>
+        </div>
+      </div>
+      <div class="tb-foot">
+        <span><b>Mode</b> · Creative Partner</span>
+        <span><b>Dates</b> · 21–25 Jul 2026</span>
+        <span><b>Techniques</b> · JTBD → SCAMPER → Assumption Reversal → One Feature Only → MoSCoW</span>
+        <span><b>Status</b> · Converged</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ THE SEED ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">00</span><span class="tick">Where it began</span></div>
+    <h2>The three seed pillars</h2>
+    <p class="sub">The session opened with your original blueprint: a client-facing dashboard resting on three pillars, with a company-admin account aggregating every project into one view.</p>
+    <div class="pillars">
+      <div class="pil"><span class="pn">PILLAR 01</span><h4>Milestones</h4><p>Sub-milestones with % completion and a drifting expected-completion date.</p></div>
+      <div class="pil"><span class="pn">PILLAR 02</span><h4>Accounts</h4><p>Every penny transacted, plus the remaining bill due on the client.</p></div>
+      <div class="pil"><span class="pn">PILLAR 03</span><h4>Material / BOQ</h4><p>Building material tracked and checked against the estimated BOQ.</p></div>
+      <div class="pil"><span class="pn">+ ADMIN</span><h4>Company rollup</h4><p>Multi-user accounts; admin aggregates metrics across every running and past project.</p></div>
+    </div>
+    <div class="ground"></div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ JTBD FOUNDATION ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">01</span><span class="tick">Technique · Job to Be Done</span></div>
+    <h2>The foundation slab</h2>
+    <p class="sub">Before adding floors, the session poured a foundation: what job does the client actually hire this app to do?</p>
+    <div class="found">
+      <div class="top">
+        <span class="tick">Core job confirmed <span style="color:var(--gold)">— by you</span></span>
+        <p class="q">“Stop me wondering whether I'm being cheated.” The client hires Contax to kill the anxiety of ghost expenses, material pilferage and drifting deadlines.</p>
+      </div>
+      <div class="btm">
+        <div><b>ANXIETY 1</b>Ghost expenses — money that leaves with no proof it was needed.</div>
+        <div><b>ANXIETY 2</b>Material pilferage — quantities that never reached the site.</div>
+        <div><b>ANXIETY 3</b>Drifting deadlines — a completion date that quietly slides.</div>
+      </div>
+    </div>
+    <p class="pull">It is a <span class="hl">trust machine</span>, not a dashboard.</p>
+  </div>
+</section>
+
+<!-- ============ THE REFRAME / BUYER MOTIVE ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">01·b</span><span class="tick">The buyer is the company</span></div>
+    <h2>Who actually pays</h2>
+    <p class="sub">A pivotal reframe: the construction company is the buyer, and its interests are primary. Client transparency is the marketing skin over an internal anti-leakage system.</p>
+    <div class="grid2">
+      <div class="card user"><span class="who">You</span><h4>A device to win hesitant clients</h4><p>The app is a trust-making device that closes clients who fear being cheated.</p></div>
+      <div class="card user"><span class="who">You</span><h4>Cheating is bottom-up</h4><p>Fraud is mostly low/mid on-site staff acting without senior knowledge — the app gives management internal transparency it can relay to clients.</p></div>
+      <div class="card user"><span class="who">You</span><h4>Polling → push</h4><p>The system collects information by itself instead of management chasing people and reports.</p></div>
+      <div class="card coach"><span class="who">Coach</span><h4>The reframe</h4><p>Sell “know what your own staff is doing,” not “give clients a dashboard.” Client transparency is the skin; owner control is the body.</p></div>
+    </div>
+    <div class="northstar" style="border-color:var(--cyan);background:var(--cyan-soft);margin-top:24px">
+      <span class="tick" style="color:var(--cyan)">Foundational value hierarchy — decided by you</span>
+      <p>The construction company is <b>our</b> client and its interests are primary. End-users' interests matter only to the degree they hold value for the construction company. Every trade-off is resolved by this hierarchy.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ FRAUD ENGINEERING ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">02</span><span class="tick">Structure over behaviour</span></div>
+    <h2>Engineering trust into the frame</h2>
+    <p class="sub">Rather than asking people to behave honestly, the session designed structures that make dishonesty require collusion — and left a trail when attempted.</p>
+    <div class="grid2">
+      <div class="card coach"><span class="who">Coach</span><h4>Role-separated double entry</h4><p>Storekeeper logs arrival, engineer logs consumption, accounts logs payment; the system auto-reconciles. Lying now requires cross-rank collusion.</p></div>
+      <div class="card coach"><span class="who">Coach</span><h4>Evidence-mandatory entries</h4><p>Geotagged challan + truck photo required; OCR reads the challan so quantities come off paper, not a typist.</p></div>
+      <div class="card coach"><span class="who">Coach</span><h4>Append-only ledger</h4><p>Corrections leave a visible trail; late or backdated entries auto-flag.</p></div>
+      <div class="card coach"><span class="who">Coach</span><h4>Day-one rule engine</h4><p>Duplicate invoice numbers, round-number bias, rate-vs-market feed, consumption-vs-BOQ thresholds — no ML required.</p></div>
+      <div class="card coach"><span class="who">Coach</span><h4>Fraud in three generations</h4><p>Rule engine on day one → cross-project math in month one → learned ML anomaly models in year one. No need to wait for a baseline.</p></div>
+      <div class="card user"><span class="who">You</span><h4>Even fraudulent data has value</h4><p>With data, ML/AI can flag and investigate fraud — impossible with no data at all. Check actuals against industry-average labour productivity and material consumption.</p></div>
+    </div>
+
+    <h3 style="margin:34px 0 6px;font-size:19px">The benchmark moat, stacked</h3>
+    <p class="sub" style="margin-bottom:16px">You confirmed anonymized cross-company pooling is culturally acceptable to Pakistani owners — making the benchmark a real moat.</p>
+    <div class="flow">
+      <span class="st">Day one · Govt MRS / CSR + MES rate books</span><span class="ar">→</span>
+      <span class="st">Month one · Company's own past projects</span><span class="ar">→</span>
+      <span class="st key">Year one · Cross-company pooled dataset = the moat</span>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ SCAMPER ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">03</span><span class="tick">Technique · SCAMPER</span></div>
+    <h2>Seven lenses on the frame</h2>
+    <p class="sub">Each lens tilted the design. Substitute, Eliminate, Combine and Reverse carried the heaviest load — the others sharpened decisions already in motion.</p>
+    <div class="scamper">
+
+      <div class="lens">
+        <div class="lh"><div class="glyph">S</div><div class="lt">Substitute<span>swap a part for another</span></div></div>
+        <ul>
+          <li class="u"><b>3-tier client delivery:</b> T1 app for the willing, T2 weekly WhatsApp PDF, T3 provisioned WhatsApp integration.</li>
+          <li class="u">Substitute a live dashboard with a <b>weekly PDF push</b> for clients who won't install.</li>
+          <li class="c">OCR reads the challan — substitute the <b>typist</b> with the paper itself.</li>
+          <li class="c">Supplier confirmation swapped for <b>ledger reconciliation</b> (no supplier adoption needed).</li>
+        </ul>
+      </div>
+
+      <div class="lens">
+        <div class="lh"><div class="glyph">C</div><div class="lt">Combine<span>merge events</span></div></div>
+        <ul>
+          <li class="c"><b>One capture, four pillars:</b> challan photo → OCR → material stock + accounts payable* + rule-engine flag.</li>
+          <li class="c">Site photo = trust evidence + %-completion proof + fraud datapoint in one upload.</li>
+          <li class="c">One weekly LLM pass writes narrative + “decisions this week” + negative-confirmation prompts.</li>
+          <li class="c">Three benchmark sources collapse into one “what should X cost?” service.</li>
+          <li class="u"><b>*Correction:</b> the payable is a recommendation the accountant must edit &amp; sign off — human-in-the-loop on money.</li>
+        </ul>
+      </div>
+
+      <div class="lens dim">
+        <div class="lh"><div class="glyph">A</div><div class="lt">Adapt<span>borrow a pattern</span></div></div>
+        <ul>
+          <li class="c">Adapt WhatsApp-native capture — absorb WhatsApp, don't fight it.</li>
+          <li class="c"><b>Negative confirmation</b> borrowed from bank statements: silence over N days = accepted.</li>
+        </ul>
+      </div>
+
+      <div class="lens dim">
+        <div class="lh"><div class="glyph">M</div><div class="lt">Modify / Magnify<span>tune the dials</span></div></div>
+        <ul>
+          <li class="c">Tiered rupee thresholds (A/B/C), all company-configurable.</li>
+          <li class="c">Magnify anomaly reach: flag under-consumption, not just overspend.</li>
+        </ul>
+      </div>
+
+      <div class="lens dim">
+        <div class="lh"><div class="glyph">P</div><div class="lt">Put to other use<span>repurpose the asset</span></div></div>
+        <ul>
+          <li class="c">The pooled benchmark dataset becomes a <b>data product / revenue line</b>, not just a detection aid.</li>
+          <li class="u">The client acts as a free auditor — visibility is zero-cost fraud detection.</li>
+        </ul>
+      </div>
+
+      <div class="lens">
+        <div class="lh"><div class="glyph">E</div><div class="lt">Eliminate<span>strip the MVP</span></div></div>
+        <ul>
+          <li class="c">Kill the client login → phone identity + one-time OTP link.</li>
+          <li class="c">Kill manual %-completion → compute it from BOQ line items marked done.</li>
+          <li class="c">Defer drawing/quality/inspection pillars; drop the ML engine from MVP.</li>
+          <li class="c">Replace free-text entry with scans wherever possible.</li>
+          <li class="u"><b>Overrides:</b> keep versioned drawings in v1; keep <b>both</b> email &amp; phone as identity.</li>
+        </ul>
+      </div>
+
+      <div class="lens">
+        <div class="lh"><div class="glyph">R</div><div class="lt">Reverse<span>flip the direction</span></div></div>
+        <ul>
+          <li class="c"><b>Reverse the burden of proof:</b> the company proactively proves innocence each week.</li>
+          <li class="c">Reverse anomaly direction — suspiciously-clean numbers are a flag too.</li>
+          <li class="c">Reverse who enters data (client logs observations) — later rejected in the PK context.</li>
+        </ul>
+      </div>
+
+    </div>
+    <p class="sub" style="margin-top:16px;font-size:13.5px">Meta-insight from the Combine lens: the product has ~3 atomic capture events — <b style="color:var(--ink)">material-in via challan, money movement, site photo</b> — and everything else is a view computed from them. Design the capture layer once; project it into every surface.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ CHANGE-ORDER GOVERNANCE ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">04</span><span class="tick">The fake-change-order fraud vector</span></div>
+    <h2>Change-order governance, finalized</h2>
+    <p class="sub">You asked the coach to propose and finalize the governance answer. The result: a separation-of-powers lifecycle where nobody who raises a change may ratify it.</p>
+
+    <div class="flow">
+      <span class="st">Draft</span><span class="ar">→</span>
+      <span class="st">Proposed <small style="color:var(--ink-dim)">Δcost+Δschedule</small></span><span class="ar">→</span>
+      <span class="st">Client-Aware</span><span class="ar">→</span>
+      <span class="st key">Approved</span><span class="ar">→</span>
+      <span class="st">Executed</span><span class="ar">→</span>
+      <span class="st">Billed</span>
+    </div>
+
+    <div class="tiers">
+      <div class="tier A"><div class="th">Tier A <small>≤1% or Rs 50k</small></div><p>Site engineer proposes + client <b>negative-confirm</b> (silence = accept).</p></div>
+      <div class="tier B"><div class="th">Tier B <small>≤5% or Rs 500k</small></div><p>Manager sign-off <b>and</b> positive client evidence before Approved.</p></div>
+      <div class="tier C"><div class="th">Tier C <small>above</small></div><p>Owner/admin sign-off <b>and</b> explicit client approval — no negative-confirm.</p></div>
+    </div>
+
+    <ul class="govlist">
+      <li><b>Separation of powers.</b> Any staff can raise a change; nobody who raises it can ratify it — recording-as-approved is a distinct gated step.</li>
+      <li><b>No retroactive change orders.</b> A CO must reach Approved before its costs are billable. Work done first is logged but flagged “executed before approval” — killing the end-of-project surprise bill.</li>
+      <li><b>Segregation of duties.</b> Whoever logs a purchase against a CO cannot be whoever proposed it.</li>
+      <li><b>Immutable audit trail.</b> Append-only; edits create new versions, originals preserved; no deletion, only a “cancelled” state.</li>
+      <li><b>Fraud surveillance on COs.</b> Rate-vs-benchmark, CO velocity per engineer, round-number bias, and “just-under-threshold” clustering at 99% of a sign-off tier.</li>
+      <li><b>The client always sees a CO before it is billed, never after.</b> Every CO auto-appears in the weekly PDF with its state and rupee delta; “decisions this week: none” when empty.</li>
+    </ul>
+
+    <div class="northstar">
+      <span class="tick">North Star — your standing meta-requirement</span>
+      <p><b>(a)</b> Prefer a configurable choice with a recommended pre-filled default over a hard-coded single answer. <b>(b)</b> Keep internal-approval and client-facing concerns as two separate axes. For future queries the coach decides using this north star, then notifies you for review rather than asking. The Tier A/B/C table became recommended defaults on both axes — every cell company-overridable.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ REVERSALS ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">05</span><span class="tick">Technique · Assumption Reversal</span></div>
+    <h2>The flips — kept, cut, and re-routed</h2>
+    <p class="sub">Reversing the core assumptions revealed Contax as a two-sided instrument — and produced a set of judgement calls, all made by you.</p>
+    <div class="flips">
+      <div class="flip">
+        <div class="from">Client detects guilt after the fact</div>
+        <div class="arrow">↺ reverse</div>
+        <div class="to">The company proactively proves innocence, weekly</div>
+        <div class="verdict keep">Kept</div>
+      </div>
+      <div class="flip">
+        <div class="from">Only staff enter data</div>
+        <div class="arrow">↺ reverse</div>
+        <div class="to">The client / family log their own observations</div>
+        <div class="verdict reject">Rejected — “a never-ending story” in the PK context</div>
+      </div>
+      <div class="flip">
+        <div class="from">Flag only overspend</div>
+        <div class="arrow">↺ reverse</div>
+        <div class="to">Two-tailed: flag under-consumption &amp; suspiciously-clean numbers</div>
+        <div class="verdict mod">Kept, but internal-first — manager decides disclosure</div>
+      </div>
+      <div class="flip">
+        <div class="from">The client is the anxious party</div>
+        <div class="arrow">↺ reverse</div>
+        <div class="to">Some are absentee investors wanting a red-flag-only feed</div>
+        <div class="verdict mod">Noted — “quiet mode” parked to v2</div>
+      </div>
+      <div class="flip">
+        <div class="from">The company is the one cheating</div>
+        <div class="arrow">↺ reverse</div>
+        <div class="to">The company can be cheated by the client (scope creep, false disputes)</div>
+        <div class="verdict keep">Two-sided protection — a selling point</div>
+      </div>
+      <div class="flip">
+        <div class="from">Everyone has a smartphone app</div>
+        <div class="arrow">↺ reverse</div>
+        <div class="to">Assume no app — SMS/IVR capture for the storekeeper</div>
+        <div class="verdict reject">Rejected — app mandatory, but low-literacy voice/icon UX</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ ONE FEATURE ONLY ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">06</span><span class="tick">Technique · One Feature Only</span></div>
+    <h2>The keystone</h2>
+    <p class="sub">If the app did exactly one thing, what would it be? The answer back-solves the entire MVP.</p>
+    <div class="keystone">
+      <span class="kmark">The irreducible spine</span>
+      <h3>The automated weekly proof-of-innocence report</h3>
+      <p>Branded, effortless, English + Urdu: money spent, material vs BOQ, photos, progress — delivered every week with no management effort. It is the buyer's #1 job made visible, and the one thing you can demo to a client on day one. Anomaly detection is deeper value, but invisible at purchase; the report is the <b style="color:var(--cyan)">wedge</b>, anomaly detection the retention.</p>
+      <div class="backsolve">
+        <div class="bs"><b>Forces →</b>OCR challan material-in</div>
+        <div class="bs"><b>Forces →</b>Money movement capture</div>
+        <div class="bs"><b>Forces →</b>Geotagged site photo</div>
+      </div>
+      <p style="margin-top:20px;font-size:14px">To produce the report you <b>must</b> capture the three atomic events. The report is the demand that creates the spine.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ MOSCOW ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">07</span><span class="tick">Convergence · MoSCoW</span></div>
+    <h2>The finished building</h2>
+    <p class="sub">The climax: the scope, floor by floor. You then promoted every SHOULD up to MUST, leaving the SHOULD tier deliberately empty — a v1 built taller than the coach first drew it.</p>
+    <div class="building">
+
+      <div class="floor must">
+        <div class="fh"><span>MUST · v1 spine</span><span class="cnt">driven by the weekly report</span></div>
+        <div class="fb">
+          <span class="feat">Weekly proof-of-innocence report (PDF/WhatsApp + in-app, Eng+Urdu)</span>
+          <span class="feat">3 capture events: OCR challan · money movement · geotagged photo</span>
+          <span class="feat">Milestones w/ BOQ-computed %</span>
+          <span class="feat">Accounts + client balance, accountant sign-off</span>
+          <span class="feat">Material vs BOQ</span>
+          <span class="feat">Photo evidence timeline</span>
+          <span class="feat">Change-order recording, tiered configurable governance</span>
+          <span class="feat">Admin cross-project rollup</span>
+          <span class="feat">Rule + PyOD anomaly flags, govt rate-book prior (internal-first, two-tailed)</span>
+          <span class="feat">Versioned drawings</span>
+          <span class="feat">Multi-auth identity + concern-tagged client numbers</span>
+          <span class="feat">Responsive web app + API-first backend</span>
+          <span class="feat">Low-literacy icon/voice-first UX</span>
+          <span class="feat">App mandatory for all roles</span>
+          <span class="feat promo">↑ Negative-confirmation approval loop</span>
+          <span class="feat promo">↑ Urdu/Punjabi voice-note ASR → decision audit log</span>
+          <span class="feat promo">↑ LLM report narrative Eng+Urdu</span>
+          <span class="feat promo">↑ Cash-heavy-site risk flag / traceable rails</span>
+          <span class="feat promo">↑ Decision audit log for out-of-app approvals</span>
+          <span class="feat promo">↑ CV progress-% from photos <em>(known-risk)</em></span>
+          <span class="feat promo">↑ On-device inference for integrity checks</span>
+          <span class="feat promo">↺ Supplier reconciliation (reinstated for confidence-through-redundancy)</span>
+        </div>
+      </div>
+
+      <div class="floor should">
+        <div class="fh"><span>SHOULD</span><span class="cnt">tier now empty</span></div>
+        <div class="fb"><span class="empty">Deliberately empty — every SHOULD was promoted to MUST.</span></div>
+      </div>
+
+      <div class="floor could">
+        <div class="fh"><span>COULD · v2</span><span class="cnt">future floors</span></div>
+        <div class="fb">
+          <span class="feat">ML learned anomaly models + cross-company benchmarking</span>
+          <span class="feat">Quality checklists / inspections / snag lists / test reports</span>
+          <span class="feat">Deep document vault</span>
+          <span class="feat">Quiet-mode client view</span>
+          <span class="feat">Random spot-check photo prompts</span>
+        </div>
+      </div>
+
+      <div class="floor wont">
+        <div class="fh"><span>WON'T · this time</span><span class="cnt">rejected or parked</span></div>
+        <div class="fb">
+          <span class="feat">Client-family parallel data entry</span>
+          <span class="feat">In-app client chat</span>
+          <span class="feat">Supplier one-tap confirmation</span>
+          <span class="feat">No-app SMS/IVR capture</span>
+          <span class="feat">Direct 3rd-party data-index sale (not sellable in PK)</span>
+          <span class="feat">Two-way WhatsApp Business integration (designed-for, deferred)</span>
+        </div>
+      </div>
+
+    </div>
+    <p class="sub" style="margin-top:22px"><b style="color:var(--ink)">A note carried as a known risk:</b> the AI/ML research judged CV progress-% from single photos unreliable. You promoted it to v1 anyway — carried as a known-risk MUST with a manual/BOQ-derived fallback planned.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ DATA CREDIBILITY ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">08</span><span class="tick">A principle that surfaced</span></div>
+    <h2>Data credibility as a first-class score</h2>
+    <p class="sub">Reinstating supplier reconciliation produced a generalizable principle: any fact confirmed by two independent captures carries higher confidence — credibility becomes a scored attribute, not an afterthought.</p>
+    <div class="cred">
+      <div class="source">
+        <b>SOURCE A · primary, real-time</b>
+        <h4>OCR'd delivery challan</h4>
+        <p>Captured at material-in. Remains the primary real-time control against fake or inflated purchases.</p>
+      </div>
+      <div class="recon"><span class="big">⇄</span>reconcile</div>
+      <div class="source">
+        <b>SOURCE B · secondary, periodic</b>
+        <h4>Supplier's account statement</h4>
+        <p>The customer-account khata issued <em>to</em> the company (not the supplier's private profit ledger). Periodically OCR'd and matched against accumulated Source A.</p>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card coach"><span class="who">Result</span><h4>Agreement → confidence</h4><p>Two independent sources agreeing raises a data-credibility score — a credibility signal on the data, not only fraud-catching.</p></div>
+      <div class="card coach"><span class="who">Result</span><h4>Divergence → investigation</h4><p>Disagreement raises an internal-first anomaly investigation. The pattern extends beyond materials: photo + ledger, milestone + consumption.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ PARKED MONETIZATION ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">09</span><span class="tick">Parked — architecture kept extensible</span></div>
+    <h2>Six ways to monetize the data</h2>
+    <p class="sub">A direct market-index sale isn't viable in Pakistan, so these were parked with an extensible marketplace/integration seam so any can be switched on later without re-architecting.</p>
+    <div class="parked">
+      <div class="park"><span class="pk">Parked 01</span><h4>Group-buying brokerage</h4><p>Aggregate consumption demand to negotiate bulk discounts; take a margin. Companies save, we earn — no data sold.</p></div>
+      <div class="park"><span class="pk">Parked 02</span><h4>Construction-finance referral</h4><p>Ledger/BOQ/progress data is exactly what banks need to lend working capital. Revenue-share on financing originated.</p></div>
+      <div class="park"><span class="pk">Parked 03</span><h4>Verified-supplier marketplace</h4><p>Suppliers pay for placement / verified badges / leads; consumption data routes the right supplier to the right project.</p></div>
+      <div class="park"><span class="pk">Parked 04</span><h4>Premium benchmarking tier</h4><p>Sold back to the companies themselves: “see how your cost/productivity compares to market” as a paid upgrade.</p></div>
+      <div class="park"><span class="pk">Parked 05</span><h4>AI BOQ auto-estimation</h4><p>Instant quotes trained on the pooled dataset — a per-estimate or subscription upsell.</p></div>
+      <div class="park"><span class="pk">Parked 06</span><h4>Verified-contractor certification</h4><p>Companies pay to earn and display a rating that wins hesitant clients — monetizing trust itself.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ SYNTHESIS ============ -->
+<section>
+  <div class="wrap reveal">
+    <div class="shead"><span class="snum">10</span><span class="tick">Session synthesis</span></div>
+    <h2>What was built</h2>
+    <div class="synth">
+      <span class="arc">Client dashboard (3 pillars) ⟶ two-sided anti-fraud trust instrument for construction companies</span>
+      <p>Contax started as a client dashboard and converged into a two-sided anti-fraud <span class="hl">trust instrument for construction companies</span> — the buyer, whose interests are primary.</p>
+      <p><b style="color:var(--ink)">Spine discovery:</b> the automated weekly proof-of-innocence report is the wedge that back-solves the whole MVP by forcing three atomic capture events — <span class="hl">OCR challan, money movement, site photo</span>. Everything else is a computed view.</p>
+      <p><b style="color:var(--ink)">How trust is engineered:</b> separation of powers + human-in-loop sign-offs + append-only audit + source-agreement data-credibility scoring — <em>not</em> by forcing behaviour change. Users stay on WhatsApp; the structure does the work.</p>
+      <p><b style="color:var(--ink)">The moat &amp; the future:</b> the benchmark stack (govt rate books → company history → cross-company pool) enables cold-start ML anomaly detection in v1 and is the long-term moat plus the parked-monetization base. AI/ML is a standing lens across three execution locations — on-device, self-hosted SLM, and third-party API behind redaction.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <hr class="rule">
+    CONTAX · Brainstorm Blueprint CTX-001 · Job to Be Done → SCAMPER → Assumption Reversal → One Feature Only → MoSCoW<br>
+    Facilitated in Creative Partner mode · 21–25 July 2026 · Report = wedge · Capture = spine · Anomaly &amp; data = depth + moat
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var els=document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return;}
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+    },{threshold:.12});
+    els.forEach(function(e){io.observe(e);});
+  })();
+</script>
+</body>
+</html>
